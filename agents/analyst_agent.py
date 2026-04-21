@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Get configuration
 agent_config = config.get('agents.analyst', {})
-max_iterations = agent_config.get('max_iterations', 15)
+max_iterations = agent_config.get('max_iterations', 1)
 allow_delegation = agent_config.get('allow_delegation', False)
 
 logger.info(f"Initializing Analyst Agent with max_iter={max_iterations}, delegation={allow_delegation}")

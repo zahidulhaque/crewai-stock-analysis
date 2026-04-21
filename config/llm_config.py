@@ -10,13 +10,14 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-def get_llm(temperature: float = 0.3, model_override: str = None):
+def get_llm(temperature: float = 0.3, model_override: str = None, max_tokens: int = None):
     """
     Get configured LLM instance for OpenAI-compatible endpoints
 
     Args:
         temperature: LLM temperature (0.0-1.0). Default 0.3 for balanced creativity
         model_override: Optional model name to override default
+        max_tokens: Maximum tokens to generate. If None, uses default per agent type
 
     Returns:
         LLM: Configured CrewAI LLM instance
@@ -48,15 +49,21 @@ def get_llm(temperature: float = 0.3, model_override: str = None):
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    logger.info(f"Configuring LLM: {model_id} at {base_url} with temperature={temperature}")
+    logger.info(f"Configuring LLM: {model_id} at {base_url} with temperature={temperature}, max_tokens={max_tokens}")
 
     try:
-        llm = LLM(
-            model=f"openai/{model_id}",
-            base_url=base_url,
-            api_key=api_key,
-            temperature=temperature
-        )
+        llm_kwargs = {
+            "model": f"openai/{model_id}",
+            "base_url": base_url,
+            "api_key": api_key,
+            "temperature": temperature
+        }
+
+        # Add max_tokens if specified
+        if max_tokens is not None:
+            llm_kwargs["max_tokens"] = max_tokens
+
+        llm = LLM(**llm_kwargs)
         logger.info(f"LLM configured successfully")
         return llm
     except Exception as e:
@@ -67,24 +74,24 @@ def get_llm(temperature: float = 0.3, model_override: str = None):
 
 def get_analyst_llm():
     """Get LLM configured for technical analyst agent"""
-    return get_llm(temperature=0.2)  # More deterministic for technical analysis
+    return get_llm(temperature=0.2, max_tokens=1024)  # Concise technical analysis
 
 
 def get_fundamental_llm():
     """Get LLM configured for fundamental analyst agent"""
-    return get_llm(temperature=0.2)  # More deterministic for financial analysis
+    return get_llm(temperature=0.2, max_tokens=1536)  # Detailed financial analysis
 
 
 def get_trader_llm():
     """Get LLM configured for trader agent"""
-    return get_llm(temperature=0.4)  # More creative for trading decisions
+    return get_llm(temperature=0.4, max_tokens=1024)  # Focused trading decisions
 
 
 def get_planner_llm():
     """Get LLM configured for planner agent"""
-    return get_llm(temperature=0.3)  # Balanced for strategic planning
+    return get_llm(temperature=0.3, max_tokens=768)  # Concise strategic plan
 
 
 def get_manager_llm():
     """Get LLM configured for manager agent (hierarchical process)"""
-    return get_llm(temperature=0.5)  # More creative for coordination
+    return get_llm(temperature=0.5, max_tokens=512)  # Brief coordination

@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 # Get configuration
 agent_config = config.get('agents.trader', {})
-max_iterations = agent_config.get('max_iterations', 15)
-allow_delegation = agent_config.get('allow_delegation', True)
+max_iterations = agent_config.get('max_iterations', 2)
+allow_delegation = agent_config.get('allow_delegation', False)
 
 logger.info(f"Initializing Trader Agent with max_iter={max_iterations}, delegation={allow_delegation}")
 

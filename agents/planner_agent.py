@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # Get configuration
 agent_config = config.get('agents.planner', {})
 temperature = agent_config.get('temperature', 0.3)
-max_iterations = agent_config.get('max_iterations', 10)
+max_iterations = agent_config.get('max_iterations', 1)
 allow_delegation = agent_config.get('allow_delegation', False)
 
 logger.info(f"Initializing Planner Agent with temp={temperature}, max_iter={max_iterations}")

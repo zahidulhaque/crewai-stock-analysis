@@ -4,22 +4,22 @@
 agents:
   analyst:
     temperature: 0.2
-    max_iterations: 3
+    max_iterations: 1
     allow_delegation: false
 
   fundamental:
     temperature: 0.2
-    max_iterations: 3
+    max_iterations: 1
     allow_delegation: false
 
   trader:
     temperature: 0.4
-    max_iterations: 3
+    max_iterations: 2
     allow_delegation: false
 
   planner:
     temperature: 0.3
-    max_iterations: 2
+    max_iterations: 1
     allow_delegation: false
 
   manager:
