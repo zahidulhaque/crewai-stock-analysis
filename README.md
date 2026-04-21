@@ -126,8 +126,8 @@ Edit `.env` file with your OpenAI-compatible API configuration:
 # Required: Your API key
 API_KEY=your_api_key_here
 
-# Required: Model ID (e.g., mistralai/Mistral-7B-Instruct-v0.3)
-MODEL_ID=mistralai/Mistral-7B-Instruct-v0.3
+# Required: Model ID (e.g., meta-llama/Llama-3.1-8B-Instruct)
+MODEL_ID=meta-llama/Llama-3.1-8B-Instruct
 
 # Required: Base URL for your OpenAI-compatible endpoint
 MODEL_BASE_URL=http://localhost:8000/v1
@@ -146,10 +146,10 @@ MODEL_BASE_URL=http://localhost:8000/v1
 
 ```bash
 # Build and run Streamlit app
-docker compose up -d
+docker compose up --build -d
 
 # Stop all services
-docker compose
+docker compose down
 ```
 
 ## 🎯 Usage
