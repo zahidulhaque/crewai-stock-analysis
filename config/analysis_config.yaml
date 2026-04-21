@@ -1,0 +1,81 @@
+# CrewAI Stock Analysis Configuration
+
+# Agent Configuration
+agents:
+  analyst:
+    temperature: 0.2
+    max_iterations: 3
+    allow_delegation: false
+
+  fundamental:
+    temperature: 0.2
+    max_iterations: 3
+    allow_delegation: false
+
+  trader:
+    temperature: 0.4
+    max_iterations: 3
+    allow_delegation: false
+
+  planner:
+    temperature: 0.3
+    max_iterations: 2
+    allow_delegation: false
+
+  manager:
+    temperature: 0.5
+    max_iterations: 5
+
+# Market Configuration
+markets:
+  us:
+    data_source: "yahoo"
+    cache_duration_seconds: 300  # 5 minutes
+    rate_limit_calls: 10
+    rate_limit_period_seconds: 60
+
+  india:
+    data_sources:
+      - "yahoo"
+      - "screener"
+    cache_duration_seconds: 600  # 10 minutes (less frequent updates)
+    rate_limit_calls: 5
+    rate_limit_period_seconds: 60
+
+# Analysis Configuration
+analysis:
+  parallel_execution: true
+  enable_memory: false  # Disabled - requires OpenAI for embeddings
+  enable_planning: false  # Disabled for faster performance
+  human_validation: false
+  verbose: true
+  max_rpm: 20  # Rate limit for LLM calls
+
+# Crew Configuration
+crew:
+  process: "sequential"  # Options: "sequential", "hierarchical"
+  memory_config:
+    enabled: true
+    short_term: true
+    long_term: true
+    entity: true
+
+# Retry Configuration
+retry:
+  max_attempts: 3
+  min_wait_seconds: 1
+  max_wait_seconds: 10
+  exponential_backoff: true
+
+# Cache Configuration
+cache:
+  enabled: true
+  max_size: 100
+  ttl_minutes: 5
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/stock_analysis.log"
+  console: true

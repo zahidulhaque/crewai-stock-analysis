@@ -3,18 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.streamlit
-    ports:
-      - "8501:8501"
+    network_mode: "host"  # Use host networking for direct localhost access
     environment:
-      - GROQ_API_KEY=${GROQ_API_KEY}
       - API_KEY=${API_KEY}
       - MODEL_ID=${MODEL_ID}
       - MODEL_BASE_URL=${MODEL_BASE_URL}
+      - OTEL_SDK_DISABLED=true
+      - no_proxy=localhost,127.0.0.1,0.0.0.0
     # env_file:
     #   - .env
-    networks:
-      - crewai-network
-
-networks:
-  crewai-network:
-    driver: bridge

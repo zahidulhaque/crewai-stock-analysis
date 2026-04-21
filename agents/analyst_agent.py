@@ -1,39 +1,36 @@
-import os
-from crewai import Agent, LLM
-from dotenv import load_dotenv
-
+"""
+Technical Analyst Agent with Enhanced Configuration
+"""
+from crewai import Agent
+from config.llm_config import get_analyst_llm
+from config.config_loader import config
 from tools.stock_research_tool import get_stock_price
-load_dotenv()
+import logging
 
+logger = logging.getLogger(__name__)
 
-groq_api_key = os.getenv("GROQ_API_KEY")
-API_KEY = os.getenv("API_KEY")
+# Get configuration
+agent_config = config.get('agents.analyst', {})
+max_iterations = agent_config.get('max_iterations', 15)
+allow_delegation = agent_config.get('allow_delegation', False)
 
-if groq_api_key:
-    llm = LLM(
-        model="groq/llama-3.3-70b-versatile",
-        temperature=0
-    )
-elif API_KEY:
-    model_kwargs = {
-        "model": f"openai/{os.getenv('MODEL_ID')}",
-        "base_url": os.getenv("MODEL_BASE_URL"),
-        "api_key": API_KEY
-    }
-    llm = LLM(**model_kwargs)
-    print(f"Using Local LLM endpoint")
-else:
-    raise ValueError("Authentication error: No valid API key found for GROQ or OpenAI.")
+logger.info(f"Initializing Analyst Agent with max_iter={max_iterations}, delegation={allow_delegation}")
 
 analyst_agent = Agent(
     role="Financial Market Analyst",
-    goal = ("Perform in-depth evaluations of publicly traded stocks using real-time data, "
-           "identifying trends, performance insights, and key financial signals to support decision-making."),
-    backstory = ("You are a veteran financial analyst with deep expertise in interpreting stock market data, "
-                 "technical trends, and fundamentals. You specialize in producing well-structured reports that evaluate "
-                 "stock performance using live market indicators."),
-    llm=llm,
+    goal=(
+        "Perform in-depth evaluations of publicly traded stocks using real-time data, "
+        "identifying trends, performance insights, and key financial signals to support decision-making."
+    ),
+    backstory=(
+        "You are a veteran financial analyst with deep expertise in interpreting stock market data, "
+        "technical trends, and fundamentals. You specialize in producing well-structured reports that evaluate "
+        "stock performance using live market indicators. You focus on providing clear, actionable insights "
+        "based on current price movements, volume analysis, and technical patterns."
+    ),
+    llm=get_analyst_llm(),
     tools=[get_stock_price],
+    allow_delegation=allow_delegation,
+    max_iter=max_iterations,
     verbose=True
-
 )

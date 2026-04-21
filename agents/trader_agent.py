@@ -1,41 +1,39 @@
-import os
-from crewai import Agent, LLM
-from dotenv import load_dotenv
+"""
+Strategic Trader Agent with Enhanced Configuration
+"""
+from crewai import Agent
+from config.llm_config import get_trader_llm
+from config.config_loader import config
+import logging
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
-groq_api_key = os.getenv("GROQ_API_KEY")
-API_KEY = os.getenv("API_KEY")
+# Get configuration
+agent_config = config.get('agents.trader', {})
+max_iterations = agent_config.get('max_iterations', 15)
+allow_delegation = agent_config.get('allow_delegation', True)
 
-if groq_api_key:
-    llm = LLM(
-        model="groq/llama-3.3-70b-versatile",
-        temperature=0
-    )
-elif API_KEY:
-    model_kwargs = {
-        "model": f"openai/{os.getenv('MODEL_ID')}",
-        "base_url": os.getenv("MODEL_BASE_URL"),
-        "api_key": API_KEY
-    }
-    llm = LLM(**model_kwargs)
-    print(f"Using Local LLM endpoint")
-else:
-    raise ValueError("Authentication error: No valid API key found for GROQ or OpenAI.")
+logger.info(f"Initializing Trader Agent with max_iter={max_iterations}, delegation={allow_delegation}")
 
 trader_agent = Agent(
     role="Strategic Stock Trader",
-    goal = (
+    goal=(
         "Decide whether to Buy, Sell, or Hold a given stock based on live market data, "
-        "price movements, and financial analysis with the available data."
+        "price movements, and financial analysis with the available data. Synthesize insights "
+        "from technical and fundamental analysis to make informed trading decisions."
     ),
-    backstory = (
+    backstory=(
         "You are a strategic trader with years of experience in timing market entry and exit points. "
-        "You rely on real-time stock data, daily price movements, and volume trends to make trading decisions "
-        "that optimize returns and reduce risk."
+        "You rely on real-time stock data, daily price movements, volume trends, and fundamental analysis "
+        "to make trading decisions that optimize returns and reduce risk. You excel at synthesizing "
+        "multiple perspectives - combining short-term technical signals with long-term fundamental value "
+        "to create balanced trading strategies. When you need additional information or clarification, "
+        "you can delegate questions to the technical analyst or fundamental analyst to ensure your "
+        "decisions are well-informed."
     ),
-    llm=llm,
+    llm=get_trader_llm(),
     tools=[],
+    allow_delegation=allow_delegation,
+    max_iter=max_iterations,
     verbose=True
-
 )

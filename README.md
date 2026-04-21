@@ -66,7 +66,7 @@ A comprehensive stock analysis system using CrewAI agents that provides **dual-m
 
 - Python 3.8+ (if running locally)
 - Docker & Docker Compose (if running via container)
-- API keys for Groq or OpenAI/Local LLM endpoint
+- API keys for your OpenAI-compatible LLM endpoint
 
 ---
 
@@ -88,7 +88,7 @@ You can start the application in **two ways**:
 ### Prerequisites
 - Python 3.8+ (if running locally)
 - Docker & Docker Compose (if running via container)
-- API keys for Groq or OpenAI/Local LLM endpoint
+- API keys for your OpenAI-compatible LLM endpoint
   
 
 ### **Option 1: Local Installation (Python)**
@@ -120,18 +120,24 @@ pip install -r requirements.txt
 ```bash
 cp .env.example .env
 ```
-Edit `.env` file with your API keys:
+Edit `.env` file with your OpenAI-compatible API configuration:
 
-#### Option 1: Using Groq (Recommended)
-GROQ_API_KEY=your_groq_api_key_here
+```bash
+# Required: Your API key
+API_KEY=your_api_key_here
 
-#### Option 2: Using Local/OpenAI Compatible API
+# Required: Model ID (e.g., mistralai/Mistral-7B-Instruct-v0.3)
+MODEL_ID=mistralai/Mistral-7B-Instruct-v0.3
 
-API_KEY=your_api_key
+# Required: Base URL for your OpenAI-compatible endpoint
+MODEL_BASE_URL=http://localhost:8000/v1
+```
 
-MODEL_ID=your_model_id 
-
-MODEL_BASE_URL=your_model_base_url
+**Supported Endpoints:**
+- Local vLLM server
+- OpenAI API
+- Azure OpenAI
+- Any OpenAI-compatible API endpoint
 
 
 ### **Option 2: Using Docker**

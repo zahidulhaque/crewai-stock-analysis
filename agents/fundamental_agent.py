@@ -1,29 +1,20 @@
-import os
-from crewai import Agent, LLM
-from dotenv import load_dotenv
-
+"""
+Fundamental Analyst Agent with Enhanced Configuration
+"""
+from crewai import Agent
+from config.llm_config import get_fundamental_llm
+from config.config_loader import config
 from tools.fundamental_analysis_tool import get_financial_statements, get_analyst_recommendations
+import logging
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
-groq_api_key = os.getenv("GROQ_API_KEY")
-API_KEY = os.getenv("API_KEY")
+# Get configuration
+agent_config = config.get('agents.fundamental', {})
+max_iterations = agent_config.get('max_iterations', 20)
+allow_delegation = agent_config.get('allow_delegation', True)
 
-if groq_api_key:
-    llm = LLM(
-        model="groq/llama-3.3-70b-versatile",
-        temperature=0
-    )
-elif API_KEY:
-    model_kwargs = {
-        "model": f"openai/{os.getenv('MODEL_ID')}",
-        "base_url": os.getenv("MODEL_BASE_URL"),
-        "api_key": API_KEY
-    }
-    llm = LLM(**model_kwargs)
-    print(f"Using Local LLM endpoint")
-else:
-    raise ValueError("Authentication error: No valid API key found for GROQ or OpenAI.")
+logger.info(f"Initializing Fundamental Agent with max_iter={max_iterations}, delegation={allow_delegation}")
 
 fundamental_analyst_agent = Agent(
     role="Hybrid Fundamental Stock Analyst (US & Indian Markets)",
@@ -41,9 +32,12 @@ fundamental_analyst_agent = Agent(
         "detailed Indian financial statements from Screener.in for Indian stocks. You can interpret different "
         "financial statement formats, calculate relevant ratios for each market, and provide culturally-aware "
         "investment recommendations that account for market-specific factors like regulatory environment, "
-        "currency considerations, and local business practices."
+        "currency considerations, and local business practices. You can delegate tasks to technical analysts "
+        "when you need additional market data or clarification on recent price movements."
     ),
-    llm=llm,
+    llm=get_fundamental_llm(),
     tools=[get_financial_statements, get_analyst_recommendations],
+    allow_delegation=allow_delegation,
+    max_iter=max_iterations,
     verbose=True
 )
